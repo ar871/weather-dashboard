@@ -1,0 +1,91 @@
+.headerTitle {
+    padding: 15px 0;
+    margin: 10px;
+    border-radius: 0;
+    background:blue;
+    text-align: center;
+    font-size: xx-large; 
+    color: white;   
+}
+
+#searchButton {
+    background:brown;
+    color: white;
+    padding: 0px;
+    margin: 0 0 10px 0;
+    
+}
+
+button:hover {
+    background: #0b7dda;
+}
+
+#historyDiv{
+    background-color:lightblue;
+    float: none;
+}
+#cityName {
+    border: 1px solid grey;
+    margin: 0 0 10px 0;
+}
+
+body, html {
+    margin: 0px;
+    max-height: 100%;
+}
+#currentWeather {
+    font-size: 18px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border: 1px solid #f1f1f1;
+    background-color:lightblue;
+    display: none;
+    border-radius: 2px;
+    padding-left: 10px;
+}
+#forecastDiv{
+    
+    background-color:white;
+    height:max-content;
+  
+}
+ #humidity, #windSpeed{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+button{
+    display: block;
+}
+
+.button {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    background-color: white;
+}
+
+#lastHistory {
+    padding: 10px 0;
+    height:max-content;
+}
+
+.container {
+    height: 100%;
+}
+
+.forecast {
+    background-color: rgb(61, 71, 86); 
+    margin: 5px;
+    padding: 5px;
+    display: none;
+    color: white;
+    border-radius: 2px;
+}
+
+h4 {
+    display: none;
+    font-size: 22px;
+    font-weight: bold;
+}
+

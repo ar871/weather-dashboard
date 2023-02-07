@@ -1,17 +1,5 @@
 // my api key 3a95d1ed9bf689469735b199ebeae609
-//https://openweathermap.org/api/geocoding-api this will change long and lat to city name
-//**Hint**: Using the 5 Day Weather Forecast API, you'll notice that you will need to pass
-// in coordinates instead of just a city name. Using the OpenWeatherMap APIs, how could we 
-//retrieve geographical coordinates given a city name? 
-// https://coding-boot-camp.github.io/full-stack/apis/how-to-use-api-keys
-
-
-
-//whem user types in city name request is sent to geocoder to find city and return 
-// long and lat which will be used for the weather 5 day weather app to find the weather for the next 5 days in that city
-
-//search will be saved on local stoarage and a "delete histomey button" will be available if user wants to delete history.
-// // will porpbly have to use moment js to tell what time it is and what the next couple days are gonna be.
+//this is a function on page load i.e., first function that is called
 function getHistory() {
     //filling the search history if exists
     searchHistory();
@@ -24,9 +12,10 @@ function getHistory() {
         alert("Geolocation is not supported");
     }
 }
-var apiKey = "3a95d1ed9bf689469735b199ebeae609"
-var latitude;
+//variables to store the location latitude and longitude from geolocation API
+var latitude;           
 var longitude;
+var apikey = "&appid=3a95d1ed9bf689469735b199ebeae609"
 
 function showWeather(position) {
     //reading the values
@@ -52,15 +41,9 @@ function showWeather(position) {
             getForecast(response);
         });
         
-        //Getting ultraviolet Index at current location by calling openweather API
-        $.ajax({
-            url: queryUrlUVIndex + "lat=" + latitude + "&lon=" + longitude + apikey,
-            method: "GET"
-        }).then(function(response) {
-            fillUVIValue(response);
-        });
     }
 }
+
 //Variable to store openweather API urls when user wishes to fetch data for a selected city
 var queryUrl = "https://api.openweathermap.org/data/2.5/weather?";
 var queryUrlUVIndex = "https://api.openweathermap.org/data/2.5/uvi?";
@@ -104,6 +87,7 @@ function getWeatherOfCity(cityName) {
         getForecast(response);
     });
 }
+
 function addCityToSearchHistory() {
     //Reading the list of searched cities from local storage
     var cityList = JSON.parse(localStorage.getItem("cities")); 
@@ -138,7 +122,7 @@ function addCityToSearchHistory() {
 }
         
 function fillCurrentWeatherDetails(response) {
-    var dateInString = moment.unix(response.dt).format("MM/DD/YYYY");
+    var dateInString = moment.unix(response.dt).format("DD/MM/YYYY");
     //Variable storing the weather icon link
     var iconurl = "http://openweathermap.org/img/w/" + response.weather[0].icon + ".png";
     $("#currentWeather").attr("style", "display: block;");
@@ -157,10 +141,101 @@ function fillCurrentWeatherDetails(response) {
     iconTag.attr("height", "60px");
     iconTag.attr("style", "padding-bottom:12px");
     var tempF = response.main.temp;
-    tempTag.text(tempF + "\u2109");
+    tempTag.text(tempF + "\u00B0" + "C");
     humidityTag.text(response.main.humidity + "%");
     //Displaying wind in miles per hour   
     windTag.text(response.wind.speed + " MPH");
     //Fill the previously searched history
     addCityToSearchHistory();
+}
+
+function searchHistory() {
+    //read the list of searched cities from local storage and populate in the search div
+    var cityList = JSON.parse(localStorage.getItem("cities"));
+    //remove the previously added cities for refreshing the contents of the search history
+    $("#lastHistory").empty();     
+    if(cityList !== null) {
+        // Create and add new buttons for each city read from the search history
+        for(var i=0; i<cityList.length; i++) {
+            var button = $("<button>");
+            button.text(cityList[i]);
+            button.attr("class", "button");
+            $("#lastHistory").append(button);
+        } 
+        //remove the previously added clear button if any
+        $("#clearHis").empty();  
+        //a button added to clear the hisotry of searched cities
+        var clearButton=$("<button>");
+        clearButton.attr("class", "clearHistory");
+        clearButton.text("Clear History");
+        $("#clearHis").append(clearButton);        
+    }
+}
+//remove the search list by clearing the local storage
+$("#clearHis").on("click", function(event) {
+    event.preventDefault();
+    //clear off the last searched city history
+    localStorage.clear();
+    searchHistory();
+});
+
+function fillUVIValue(response) {
+    var uvTag = $("#uvIndex");
+    uvTag.text(response.value);
+    uvTag.attr("style", "color: white; background-color: red; padding: 2px 5px; border-radius: 5px;")
+}
+
+$(document).on("click", ".button", function(event) {
+    event.preventDefault();
+    //calling to get the current weather forecast of the intended city
+    getWeatherOfCity($(this).text());
+});
+//get weather forecast of the next 5 days
+function getForecast(response) {
+    var meanTimeWeatherList = [];
+    var today = moment().format("DD MMM YYYY");
+    for(var i=0; i<response.list.length; i++) {
+        //splitting the date and time to get weather forecast after 12:00PM of the next day
+        var arr = response.list[i].dt_txt.split(" ");
+        if(arr[1] === "12:00:00") {
+            meanTimeWeatherList.push(response.list[i]);
+        }
+    }
+    //shifting is to go for the forecast of next 5 days and no to include the current day
+    meanTimeWeatherList.shift();
+    //adding the last noted weather of the 5th day 
+    meanTimeWeatherList.push(response.list[response.list.length - 1]);
+    //displaying the forecast using the forecast class to crate blocks for each of the day's forecast
+    var forecastList = document.querySelectorAll(".forecast");
+    $("h4").attr("style", "display:block;");
+    for(var i=0; i<meanTimeWeatherList.length; i++) {
+        for(var j=0; j<forecastList.length; j++) {
+            //to fill the forecast details (using the attribute next-day) of the next 5 days
+            if(parseInt(forecastList[j].getAttribute("next-day")) === i) {
+                forecastList[j].setAttribute("style", "display:block;");
+                //creating date, icon, temperature and humidity tags to save the forecast details
+                var dateTag = document.createElement('p');
+                var iconTag = document.createElement('img');
+                var tempTag = document.createElement('p');
+                var humidityTag = document.createElement('p');
+                //unix timestamp for the forecast record
+                var dateString = moment.unix(meanTimeWeatherList[i].dt).format("DD/MM/YYYY");
+                dateTag.innerHTML = dateString;
+                dateTag.setAttribute("style", "font-size: 20px; font-weight: bold;");
+                var iconurl = "http://openweathermap.org/img/w/" + meanTimeWeatherList[i].weather[0].icon + ".png";
+                iconTag.setAttribute("src", iconurl);
+                iconTag.setAttribute("height", "60px");
+                iconTag.setAttribute("style", "padding-bottom: 5px;");
+                var tempF = meanTimeWeatherList[i].main.temp;
+                tempTag.innerHTML = "Temp: "+tempF + " \u00B0" +"C";
+                humidityTag.innerHTML = "Humidity: " + meanTimeWeatherList[i].main.humidity + "%";
+                //clear off the previous forecast contents
+                forecastList[j].innerHTML = "";
+                forecastList[j].appendChild(dateTag);
+                forecastList[j].appendChild(iconTag);
+                forecastList[j].appendChild(tempTag);
+                forecastList[j].appendChild(humidityTag);
+            }
+        }
+    }
 }
