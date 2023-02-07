@@ -8,3 +8,6 @@ You can then search another city and your previous searches will be saved so you
 
 # resources
 This application was made using open weather and geolocation APIS.
+
+Here is my deployed website.
+https://ar871.github.io/weather-dashboard/
