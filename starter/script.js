@@ -141,7 +141,7 @@ function fillCurrentWeatherDetails(response) {
     iconTag.attr("height", "60px");
     iconTag.attr("style", "padding-bottom:12px");
     var tempF = response.main.temp;
-    tempTag.text(tempF + "\u00B0" + "C");
+    tempTag.text((Math.round((tempF - 32 ) * 5/9)) + "\u00B0" + "C");//(Math.round((tempF - 32 ) * 5/9))
     humidityTag.text(response.main.humidity + "%");
     //Displaying wind in miles per hour   
     windTag.text(response.wind.speed + " MPH");
@@ -208,8 +208,8 @@ function getForecast(response) {
     //displaying the forecast using the forecast class to crate blocks for each of the day's forecast
     var forecastList = document.querySelectorAll(".forecast");
     $("h4").attr("style", "display:block;");
-    for(var i=0; i<meanTimeWeatherList.length; i++) {
-        for(var j=0; j<forecastList.length; j++) {
+    for(var i= 0; i<meanTimeWeatherList.length; i++) {
+        for(var j = 0; j<forecastList.length; j++) {//
             //to fill the forecast details (using the attribute next-day) of the next 5 days
             if(parseInt(forecastList[j].getAttribute("next-day")) === i) {
                 forecastList[j].setAttribute("style", "display:block;");
@@ -219,7 +219,7 @@ function getForecast(response) {
                 var tempTag = document.createElement('p');
                 var humidityTag = document.createElement('p');
                 //unix timestamp for the forecast record
-                var dateString = moment.unix(meanTimeWeatherList[i].dt).format("DD/MM/YYYY");
+                var dateString = moment.unix(meanTimeWeatherList[i].dt).format("DD/MM/YYYY"); //
                 dateTag.innerHTML = dateString;
                 dateTag.setAttribute("style", "font-size: 20px; font-weight: bold;");
                 var iconurl = "http://openweathermap.org/img/w/" + meanTimeWeatherList[i].weather[0].icon + ".png";
@@ -227,7 +227,7 @@ function getForecast(response) {
                 iconTag.setAttribute("height", "60px");
                 iconTag.setAttribute("style", "padding-bottom: 5px;");
                 var tempF = meanTimeWeatherList[i].main.temp;
-                tempTag.innerHTML = "Temp: "+tempF + " \u00B0" +"C";
+                tempTag.innerHTML = "Temp: "+(Math.round((tempF - 32 ) * 5/9)) + " \u00B0" +"C";//
                 humidityTag.innerHTML = "Humidity: " + meanTimeWeatherList[i].main.humidity + "%";
                 //clear off the previous forecast contents
                 forecastList[j].innerHTML = "";
