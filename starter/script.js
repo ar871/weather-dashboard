@@ -194,24 +194,24 @@ $(document).on("click", ".button", function(event) {
 function getForecast(response) {
     var meanTimeWeatherList = [];
     var today = moment().format("DD MMM YYYY");
-    for(var i=0; i<response.list.length; i++) {
+    for(var i=0; i <response.list.length; i++) {//=
         //splitting the date and time to get weather forecast after 12:00PM of the next day
-        var arr = response.list[i].dt_txt.split(" ");
-        if(arr[1] === "12:00:00") {
+        var arr = response.list[i  ].dt_txt.split(" ");//
+        if(arr[1] === "12:00:00") {//
             meanTimeWeatherList.push(response.list[i]);
         }
     }
     //shifting is to go for the forecast of next 5 days and no to include the current day
-    meanTimeWeatherList.shift();
+    
     //adding the last noted weather of the 5th day 
     meanTimeWeatherList.push(response.list[response.list.length - 1]);
     //displaying the forecast using the forecast class to crate blocks for each of the day's forecast
     var forecastList = document.querySelectorAll(".forecast");
     $("h4").attr("style", "display:block;");
-    for(var i= 0; i<meanTimeWeatherList.length; i++) {
-        for(var j = 0; j<forecastList.length; j++) {//
+    for(var i= 0; i<meanTimeWeatherList.length ; i++) {
+        for(var j = 0; j < forecastList.length  ; j++) {//
             //to fill the forecast details (using the attribute next-day) of the next 5 days
-            if(parseInt(forecastList[j].getAttribute("next-day")) === i) {
+            if(parseInt(forecastList[j].getAttribute("next-day")) === i) {//=
                 forecastList[j].setAttribute("style", "display:block;");
                 //creating date, icon, temperature and humidity tags to save the forecast details
                 var dateTag = document.createElement('p');
